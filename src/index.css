@@ -14,7 +14,7 @@ code {
 
 
 /* App.css */
-@media (max-width: 889px) {
+@media (max-width: 899px) {
   .App .desktop-filter-sidebar {
     display: none;
   }
@@ -28,7 +28,7 @@ code {
 
 }
 
-@media (min-width: 889px) {
+@media (min-width: 900px) {
   .App .responsive-filter-container {
     display: none;
   }
