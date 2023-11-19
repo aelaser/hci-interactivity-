@@ -2,6 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { database } from './firebase/firebaseConfig';
 import { ref, onValue } from 'firebase/database';
 import { Container, Grid, Card, CardContent, Typography, TextField, Chip, Modal, Box } from '@mui/material';
+import { createMuiTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: 'Poppins, sans-serif',
+    fontSize: 16, // Base font size in pixels
+    h1: {
+      fontSize: '1rem', // Corresponds to 32px
+    },
+    h2: {
+      marginTop: '1rem',
+      marginBottom: '0.5rem',
+      fontWeight: '400',
+      fontSize: '1.2rem', // Corresponds to 32px
+    },
+    body1: {
+      fontSize: '1rem', // Corresponds to 16px
+    },
+  },
+});
 
 function App() {
   const [data, setData] = useState(null);
@@ -65,11 +85,14 @@ function App() {
   function renderFilterSidebar() {
     return (
       <div style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
-        <h2>Filter by Degree</h2>
+        {/* Filter by degree */}
+        <h2>Degree</h2>
         {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
-        <h2>Filter by Job Type</h2>
-        {renderCheckboxes('jobType', ['Internship', 'Full time job', 'Networking'])}
-        <h2>Filter by Graduation Year</h2>
+        {/* Filter by job type */}
+        <h2>Job Type</h2>
+        {renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking'])}
+        {/* Filter by grad year */}
+        <h2>Graduation Year</h2>
         {renderCheckboxes('gradYear', [2024, 2025])}
       </div>
     );
@@ -90,9 +113,10 @@ function App() {
   function renderFilterTags() {
     return (
       <div style={{ display: 'flex', overflowX: 'auto', padding: '10px' }}>
-        <Chip label="Filter by Degree" onClick={() => openModal('degree')} style={{ marginRight: '10px' }} />
-        <Chip label="Filter by Job Type" onClick={() => openModal('jobType')} style={{ marginRight: '10px' }} />
-        <Chip label="Filter by Graduation Year" onClick={() => openModal('gradYear')} />
+        {/* Filters */}
+        <Chip label="Degree" onClick={() => openModal('degree')} style={{ marginRight: '10px' }} />
+        <Chip label="Job Type" onClick={() => openModal('jobType')} style={{ marginRight: '10px' }} />
+        <Chip label="Graduation Year" onClick={() => openModal('gradYear')} />
       </div>
     );
   }
@@ -102,7 +126,7 @@ function App() {
       case 'degree':
         return renderCheckboxes('degree', ['IC', 'PSYC', 'LMC']);
       case 'jobType':
-        return renderCheckboxes('jobType', ['Internship', 'Full time job', 'Networking']);
+        return renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking']);
       case 'gradYear':
         return renderCheckboxes('gradYear', [2024, 2025]);
       default:
@@ -113,8 +137,9 @@ function App() {
   if (!data) return <div>Loading...</div>;
 
   return (
+    <ThemeProvider theme={theme}>
     <div className="App">
-    <Container style={{ marginTop: '20px', maxWidth: '1000px' }}>
+    <Container style={{ marginTop: '90px', maxWidth: '1000px' }}>
       <TextField
         fullWidth
         label="Search"
@@ -132,24 +157,32 @@ function App() {
         </Box>
       </Modal>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4} className="desktop-filter-sidebar">
+        <Grid item xs={12} md={3.5} className="desktop-filter-sidebar">
           {renderFilterSidebar()}
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={8.5}>
           <h1>Student Info</h1>
           <Grid container spacing={3}>
             {filterData(data).map(([key, value]) => (
               <Grid item xs={12} sm={6} md={4} key={key}>
                 <Card>
-                  <CardContent>
-                    <Typography variant="h5" component="h2">
+                  <CardContent style={{textAlign: 'center'}}>
+                    {value.Image && <img src={value.Image} alt={value.Name} style={{ 
+                            width: '150px',   // Fixed width
+                            height: '150px',  // Fixed height
+                            borderRadius: '50%', // Rounded corners to make it a circle
+                            objectFit: 'cover', // Ensures the image covers the area without stretching
+                            display: 'block', // To prevent inline default of images
+                            margin: 'auto' // Center the image
+                          }}  />}
+                    <Typography variant="h2" component="h2">
                       {value.Name}
                     </Typography>
                     <Typography color="textSecondary">
                       Degree: {value.Degree}
                     </Typography>
                     <Typography color="textSecondary">
-                      Graduation Date: {value['Gradaution Date']}
+                      Graduation Date: {value['Graduation Date']}
                     </Typography>
                     <Typography color="textSecondary">
                       Job Type: {value['Job type']}
@@ -166,6 +199,7 @@ function App() {
       </Grid>
     </Container>
     </div>
+    </ThemeProvider>
   );
   
   
