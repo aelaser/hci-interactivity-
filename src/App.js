@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { database } from './firebase/firebaseConfig';
 import { ref, onValue } from 'firebase/database';
-import { Container, Grid, Card, CardContent, Typography, TextField } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, TextField, Chip, Modal, Box } from '@mui/material';
 
 function App() {
   const [data, setData] = useState(null);
@@ -9,6 +9,9 @@ function App() {
   const [selectedDegrees, setSelectedDegrees] = useState([]);
   const [selectedJobTypes, setSelectedJobTypes] = useState([]);
   const [selectedGradYears, setSelectedGradYears] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeFilterType, setActiveFilterType] = useState(null);
+  
 
   useEffect(() => {
     const dataRef = ref(database, '1p4rz_7ShnWM-EuNAqSs3k9aYCDFmGbh6giqAP6PpQIc/Sheet1');
@@ -59,10 +62,59 @@ function App() {
     ));
   }
 
+  function renderFilterSidebar() {
+    return (
+      <div style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
+        <h2>Filter by Degree</h2>
+        {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
+        <h2>Filter by Job Type</h2>
+        {renderCheckboxes('jobType', ['Internship', 'Full time job', 'Networking'])}
+        <h2>Filter by Graduation Year</h2>
+        {renderCheckboxes('gradYear', [2024, 2025])}
+      </div>
+    );
+  }
+  
+
+
+  function openModal(filterType) {
+    setActiveFilterType(filterType);
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+    setActiveFilterType(null);
+  }
+
+  function renderFilterTags() {
+    return (
+      <div style={{ display: 'flex', overflowX: 'auto', padding: '10px' }}>
+        <Chip label="Filter by Degree" onClick={() => openModal('degree')} style={{ marginRight: '10px' }} />
+        <Chip label="Filter by Job Type" onClick={() => openModal('jobType')} style={{ marginRight: '10px' }} />
+        <Chip label="Filter by Graduation Year" onClick={() => openModal('gradYear')} />
+      </div>
+    );
+  }
+
+  function renderModalContent() {
+    switch (activeFilterType) {
+      case 'degree':
+        return renderCheckboxes('degree', ['IC', 'PSYC', 'LMC']);
+      case 'jobType':
+        return renderCheckboxes('jobType', ['Internship', 'Full time job', 'Networking']);
+      case 'gradYear':
+        return renderCheckboxes('gradYear', [2024, 2025]);
+      default:
+        return null;
+    }
+  }
+
   if (!data) return <div>Loading...</div>;
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+    <div className="App">
+    <Container style={{ marginTop: '20px', maxWidth: '1000px' }}>
       <TextField
         fullWidth
         label="Search"
@@ -71,16 +123,17 @@ function App() {
         onChange={(e) => setSearchQuery(e.target.value)}
         style={{ marginBottom: '20px' }}
       />
+      <div className="responsive-filter-container">
+        {renderFilterTags()}
+      </div>
+      <Modal open={isModalOpen} onClose={closeModal}>
+        <Box style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white', padding: '20px', maxHeight: '80vh', overflow: 'auto' }}>
+          {renderModalContent()}
+        </Box>
+      </Modal>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <div style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
-            <h2>Filter by Degree</h2>
-            {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
-            <h2>Filter by Job Type</h2>
-            {renderCheckboxes('jobType', ['Internship', 'Full time job', 'Networking'])}
-            <h2>Filter by Graduation Year</h2>
-            {renderCheckboxes('gradYear', [2024, 2025])}
-          </div>
+        <Grid item xs={12} md={4} className="desktop-filter-sidebar">
+          {renderFilterSidebar()}
         </Grid>
         <Grid item xs={12} md={8}>
           <h1>Student Info</h1>
@@ -112,7 +165,10 @@ function App() {
         </Grid>
       </Grid>
     </Container>
+    </div>
   );
+  
+  
 }
 
 export default App;

@@ -11,3 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* App.css */
+@media (max-width: 889px) {
+  .App .desktop-filter-sidebar {
+    display: none;
+  }
+  /* Styles for scrollable filter tags */
+.App .responsive-filter-container {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px;
+}
+
+}
+
+@media (min-width: 889px) {
+  .App .responsive-filter-container {
+    display: none;
+  }
+}
+
