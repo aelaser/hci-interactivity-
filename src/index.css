@@ -64,6 +64,70 @@ code {
 }
 
 
+/* Arrow */
+.arrow-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; /* Adjust the width as needed */
+  height: 30px; /* Adjust the height as needed */
+  margin: 1em auto;
+}
+
+/* Arrow Icon */
+.arrow-icon {
+  /* Adjust the size of the arrow icon relative to its container */
+  transform: scale(0.6); /* Scale down the arrow */
+}
+
+.left-bar, .right-bar {
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  width: 20px; /* Smaller width */
+  height: 5px; /* Smaller height */
+  display: block;
+  float: right;
+  border-radius: 2px;
+}
+
+.left-bar {
+  left: 0;
+  transform: rotate(35deg);
+}
+
+.left-bar:after, .right-bar:after {
+  content: "";
+  background-color: #00233F;
+  width: 20px; /* Smaller width */
+  height: 5px; /* Smaller height */
+  display: block;
+  float: right;
+  border-radius: 3px 5px 5px 3px; /* Adjusted border radius */
+  transition: all 0.5s cubic-bezier(.25, 1.7, .35, .8);
+  z-index: -1;
+}
+
+.right-bar {
+  left: 13px; /* Adjusted position */
+  transform: rotate(-35deg);
+}
+
+.right-bar:after {
+  border-radius: 5px 3px 3px 5px; /* Adjusted border radius */
+}
+
+.arrow-icon.open .left-bar:after {
+  transform-origin: center center;
+  transform: rotate(-70deg);
+}
+
+.arrow-icon.open .right-bar:after {
+  transform-origin: center center;
+  transform: rotate(70deg);
+}
+
+
 /* App.css */
 @media (max-width: 899px) {
   .App .desktop-filter-sidebar {

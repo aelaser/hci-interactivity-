@@ -3,6 +3,9 @@ import { database } from './firebase/firebaseConfig';
 import { ref, onValue } from 'firebase/database';
 import { Container, Grid, Card, CardContent, Typography, TextField, Chip, Modal, Box } from '@mui/material';
 import { createMuiTheme, ThemeProvider } from '@mui/material/styles';
+import CustomArrowIcon from './components/ArrowIcon'; // Adjust the import path as needed
+
+
 
 const theme = createMuiTheme({
   typography: {
@@ -12,7 +15,7 @@ const theme = createMuiTheme({
       fontSize: '1rem', // Corresponds to 32px
     },
     h2: {
-      color: '#212121',
+      color: '#00233F',
       marginTop: '1rem',
       marginBottom: '0.5rem',
       fontWeight: '600',
@@ -21,6 +24,7 @@ const theme = createMuiTheme({
     body1: {
       fontSize: '1rem', // Corresponds to 16px
     },
+
   },
 });
 
@@ -32,12 +36,42 @@ function App() {
   const [selectedGradYears, setSelectedGradYears] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeFilterType, setActiveFilterType] = useState(null);
-  
+
+
+  // New state for storing unique filter options
+  const [uniqueDegrees, setUniqueDegrees] = useState([]);
+  const [uniqueJobTypes, setUniqueJobTypes] = useState([]);
+  const [uniqueGradYears, setUniqueGradYears] = useState([]);
+
+  const [expanded, setExpanded] = useState({}); // State to manage expanded cards
+
+  const handleExpandClick = (id) => {
+    setExpanded(prevExpanded => ({
+      ...prevExpanded,
+      [id]: !prevExpanded[id] // Toggle the expanded state for the specific card
+    }));
+  };
+
 
   useEffect(() => {
     const dataRef = ref(database, '1p4rz_7ShnWM-EuNAqSs3k9aYCDFmGbh6giqAP6PpQIc/Sheet1');
     onValue(dataRef, (snapshot) => {
-      setData(snapshot.val());
+      const fetchedData = snapshot.val();
+      setData(fetchedData);
+
+      // Extract unique values for each filter category
+      const degrees = new Set();
+      const jobTypes = new Set();
+      const gradYears = new Set();
+      Object.values(fetchedData).forEach(item => {
+        degrees.add(item.Degree);
+        jobTypes.add(item['Job type']);
+        gradYears.add(item['Graduation Date']);
+      });
+
+      setUniqueDegrees([...degrees]);
+      setUniqueJobTypes([...jobTypes]);
+      setUniqueGradYears([...gradYears]);
     });
   }, []);
 
@@ -48,7 +82,7 @@ function App() {
       );
       const matchesDegree = !selectedDegrees.length || selectedDegrees.includes(value.Degree);
       const matchesJobType = !selectedJobTypes.length || selectedJobTypes.includes(value['Job type']);
-      const matchesGradYear = !selectedGradYears.length || selectedGradYears.includes(value['Gradaution Date']);
+      const matchesGradYear = !selectedGradYears.length || selectedGradYears.includes(value['Graduation Date']);
       return matchesSearchQuery && matchesDegree && matchesJobType && matchesGradYear;
     });
   }
@@ -63,19 +97,28 @@ function App() {
     }
   }
 
-  function renderCheckboxes(filterType, items) {
-    const isSelected = (item) => {
-      if (filterType === 'degree') return selectedDegrees.includes(item);
-      if (filterType === 'jobType') return selectedJobTypes.includes(item);
-      if (filterType === 'gradYear') return selectedGradYears.includes(item);
-      return false;
-    };
+  // Check if an item is selected for a specific filter type
+  const isSelected = (filterType, item) => {
+    if (filterType === 'degree') {
+      return selectedDegrees.includes(item);
+    } else if (filterType === 'jobType') {
+      return selectedJobTypes.includes(item);
+    } else if (filterType === 'gradYear') {
+      return selectedGradYears.includes(item);
+    }
+    return false;
+  };
+  
+  function renderCheckboxes(filterType) {
+    const items = filterType === 'degree' ? uniqueDegrees
+                 : filterType === 'jobType' ? uniqueJobTypes
+                 : uniqueGradYears;
 
     return items.map(item => (
       <div key={item}>
         <input
           type="checkbox"
-          checked={isSelected(item)}
+          checked={isSelected(filterType, item)}
           onChange={() => handleFilterChange(filterType, item)}
         />
         {item}
@@ -180,31 +223,74 @@ function App() {
           <Grid container spacing={3}>
             {filterData(data).map(([key, value]) => (
               <Grid item xs={12} sm={6} md={4} key={key}>
-                <Card className="rounded-card">
+                <Card 
+                  className="rounded-card" 
+                  style={{ 
+                    boxShadow: expanded[key] ? 'none' : '0px 6.5px 0px rgba(64, 136, 194, 0.5)', // Conditional shadow
+                 
+                  }} 
+                  onClick={() => handleExpandClick(key)}
+                >
                   <CardContent style={{textAlign: 'center'}}>
-                    {value.Image && <img src={value.Image} alt={value.Name} style={{ 
-                            width: '120px',   // Fixed width
-                            height: '120px',  // Fixed height
-                            borderRadius: '50%', // Rounded corners to make it a circle
-                            objectFit: 'cover', // Ensures the image covers the area without stretching
-                            display: 'block', // To prevent inline default of images
-                            margin: 'auto' // Center the image
-                          }}  />}
+                  <div style={{ textAlign: 'left' }}>
+                    <Chip
+                      label={`${value.Id}`}
+                      style={{
+                        backgroundColor: 'rgba(255, 161, 0, 0.5)',
+                        borderRadius: '20px',
+                        color: '#00233F',
+                        marginBottom: '10px' // Space between the Chip and the image
+                      }}
+                    />
+                  </div>
+                  {value.Image && (
+                    <img
+                      src={value.Image}
+                      alt={value.Name}
+                      style={{
+                        width: '120px',
+                        height: '120px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        display: 'block',
+                        margin: 'auto',
+                        marginBottom: '10px' // Space between image and text
+                      }}
+                    />
+                  )}
                     <Typography variant="h2" component="h2">
                       {value.Name}
                     </Typography>
                     <Typography color="textSecondary">
-                      Degree: {value.Degree}
+                      {value.Degree} | {value['Graduation Date']}
                     </Typography>
-                    <Typography color="textSecondary">
+                    {/* <Typography color="textSecondary">
                       Graduation Date: {value['Graduation Date']}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      Job Type: {value['Job type']}
-                    </Typography>
-                    <Typography color="textSecondary">
+                    </Typography> */}
+
+                      {expanded[key] && (
+                                  <Typography color="textSecondary">
+                                    Job Type: {value['Job type']}
+                                  </Typography>
+                                )}
+                      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginRight: '20px', marginBottom: '5px', cursor: 'pointer'}}>
+                      <div onClick={(e) => { 
+                                  e.stopPropagation(); // Stop event propagation
+                                  handleExpandClick(key);
+                                }}>
+                  <CustomArrowIcon isOpen={expanded[key]} />
+                </div>
+              </div>
+
+
+                    
+
+       
+
+              
+                    {/* <Typography color="textSecondary">
                       ID: {value.Id}
-                    </Typography>
+                    </Typography> */}
                   </CardContent>
                 </Card>
               </Grid>
