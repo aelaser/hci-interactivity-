@@ -4,12 +4,15 @@ import { ref, onValue } from 'firebase/database';
 import { Container, Grid, Card, CardContent, Typography, TextField, Chip, Modal, Box } from '@mui/material';
 import { createMuiTheme, ThemeProvider } from '@mui/material/styles';
 import CustomArrowIcon from './components/ArrowIcon'; // Adjust the import path as needed
-
+import { Divider, IconButton } from '@mui/material';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import LanguageIcon from '@mui/icons-material/Language';
+import EmailIcon from '@mui/icons-material/Email';
 
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: 'Poppins, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     fontSize: 16, // Base font size in pixels
     h1: {
       fontSize: '1rem', // Corresponds to 32px
@@ -20,6 +23,13 @@ const theme = createMuiTheme({
       marginBottom: '0.5rem',
       fontWeight: '600',
       fontSize: '1.2rem', // Corresponds to 32px
+    },
+    h3: {
+      color: '#00233F',
+      fontSize: '1rem',
+      fontWeight: 600,
+      marginTop: '0.8rem',
+      marginBottom: '0.3rem',
     },
     body1: {
       fontSize: '1rem', // Corresponds to 16px
@@ -108,35 +118,35 @@ function App() {
     }
     return false;
   };
-  
   function renderCheckboxes(filterType) {
     const items = filterType === 'degree' ? uniqueDegrees
                  : filterType === 'jobType' ? uniqueJobTypes
                  : uniqueGradYears;
-
+  
     return items.map(item => (
-      <div key={item}>
+      <div className="checkbox-container" key={item}>
         <input
           type="checkbox"
           checked={isSelected(filterType, item)}
           onChange={() => handleFilterChange(filterType, item)}
         />
-        {item}
+        <label>{item}</label>
       </div>
     ));
   }
+  
 
   function renderFilterSidebar() {
     return (
       <div className = "filter-card" style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
         {/* Filter by degree */}
-        <h2>Degree</h2>
+        <h2>Track</h2>
         {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
         {/* Filter by job type */}
-        <h2>Job Type</h2>
+        <h2 style = {{marginTop: '28px'}}>Seeking</h2>
         {renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking'])}
         {/* Filter by grad year */}
-        <h2>Graduation Year</h2>
+        <h2 style = {{marginTop: '28px'}}>Graduation Year</h2>
         {renderCheckboxes('gradYear', [2024, 2025])}
       </div>
     );
@@ -267,12 +277,72 @@ function App() {
                     {/* <Typography color="textSecondary">
                       Graduation Date: {value['Graduation Date']}
                     </Typography> */}
+                    
+                    {expanded[key] && (
+                        <>
+                          <Typography variant="h3" component="h3">
+                            Interests
+                          </Typography>
+                          <Typography color="textSecondary">
+                            {value['Interests']}
+                          </Typography>
+                        </>
+                      )}
 
-                      {expanded[key] && (
-                                  <Typography color="textSecondary">
-                                    Job Type: {value['Job type']}
-                                  </Typography>
-                                )}
+{expanded[key] && (
+  <>
+    <Typography variant="h3" component="h3">
+      Seeking
+    </Typography>
+    <Typography color="textSecondary">
+      {value['Job type']}
+    </Typography>
+    <Divider style={{ margin: '10px 0' }} />
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <IconButton 
+        aria-label="LinkedIn" 
+        style={{ 
+          margin: '0 5px', 
+          border: '1px solid #BCC3C9',
+          borderRadius: '50%', // Makes the border circular
+          color: '#BCC3C9' 
+        }} 
+        onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
+        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+      >
+        <LinkedInIcon />
+      </IconButton>
+      <IconButton 
+        aria-label="Website" 
+        style={{ 
+          margin: '0 5px', 
+          border: '1px solid #BCC3C9',
+          borderRadius: '50%', // Makes the border circular
+          color: '#BCC3C9' 
+        }} 
+        onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
+        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+      >
+        <LanguageIcon />
+      </IconButton>
+      <IconButton 
+        aria-label="Email" 
+        style={{ 
+          margin: '0 5px', 
+          border: '1px solid #BCC3C9',
+          borderRadius: '50%', // Makes the border circular
+          color: '#BCC3C9' 
+        }} 
+        onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
+        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+      >
+        <EmailIcon />
+      </IconButton>
+    </div>
+  </>
+)}
+
+
                       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginRight: '20px', marginBottom: '5px', cursor: 'pointer'}}>
                       <div onClick={(e) => { 
                                   e.stopPropagation(); // Stop event propagation

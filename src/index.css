@@ -5,7 +5,7 @@ html {
 body {
   color: #00233F;
   background-color: #EDF0F5;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem; /* 1rem = 16px (if the base size is 16px) */
 
 }
@@ -22,6 +22,10 @@ h2 {
   font-size: 1.3rem;
 }
 
+h3 {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
 
 p {
   font-size: 1rem; /* 1rem = 16px */
@@ -126,6 +130,51 @@ code {
   transform-origin: center center;
   transform: rotate(70deg);
 }
+
+
+/* Filter  */
+/* Checkbox customization */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Spacing between each filter option */
+}
+
+.checkbox-container label {
+  margin-left: 8px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* background-color: #f0f0f0; */
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px; /* Slightly rounded corners */
+  border: 1px solid #BCC3C9;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox-container input[type='checkbox']:checked {
+  background-color: #4088C2;
+  border-color: rgba(64, 136, 194, 0.5);
+}
+
+.checkbox-container input[type='checkbox']:checked:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 3px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
 
 
 /* App.css */
