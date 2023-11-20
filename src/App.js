@@ -12,9 +12,10 @@ const theme = createMuiTheme({
       fontSize: '1rem', // Corresponds to 32px
     },
     h2: {
+      color: '#212121',
       marginTop: '1rem',
       marginBottom: '0.5rem',
-      fontWeight: '400',
+      fontWeight: '600',
       fontSize: '1.2rem', // Corresponds to 32px
     },
     body1: {
@@ -84,7 +85,7 @@ function App() {
 
   function renderFilterSidebar() {
     return (
-      <div style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
+      <div className = "filter-card" style={{ padding: '20px', borderRight: '1px solid #ccc' }}>
         {/* Filter by degree */}
         <h2>Degree</h2>
         {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
@@ -139,14 +140,28 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
     <div className="App">
-    <Container style={{ marginTop: '90px', maxWidth: '1000px' }}>
+    <Container style={{ marginTop: '35px', maxWidth: '1000px' }}>
+      {/* Header Image */}
+      <img 
+        src="https://i.postimg.cc/RFyHr2SF/Email-Header-Interactivity2024-copy-2-png.png" // Replace with your image URL
+        alt="Header"
+        style={{
+          width: '100%', // Full width of the container
+          height: 'auto', // Maintain aspect ratio
+          marginBottom: '35px', // Space between image and search bar
+          borderRadius: '1.5rem', // Rounded edges
+        }}
+      />
+      
+      {/* Search Bar */}
       <TextField
+        className='search-bar'
         fullWidth
         label="Search"
         variant="outlined"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ marginBottom: '20px' }}
+        style={{ marginBottom: '35px' }}
       />
       <div className="responsive-filter-container">
         {renderFilterTags()}
@@ -156,20 +171,20 @@ function App() {
           {renderModalContent()}
         </Box>
       </Modal>
-      <Grid container spacing={3}>
+      <Grid container spacing={4}>
         <Grid item xs={12} md={3.5} className="desktop-filter-sidebar">
           {renderFilterSidebar()}
         </Grid>
         <Grid item xs={12} md={8.5}>
-          <h1>Student Info</h1>
+          <h1>Meet Our Students</h1>
           <Grid container spacing={3}>
             {filterData(data).map(([key, value]) => (
               <Grid item xs={12} sm={6} md={4} key={key}>
-                <Card>
+                <Card className="rounded-card">
                   <CardContent style={{textAlign: 'center'}}>
                     {value.Image && <img src={value.Image} alt={value.Name} style={{ 
-                            width: '150px',   // Fixed width
-                            height: '150px',  // Fixed height
+                            width: '120px',   // Fixed width
+                            height: '120px',  // Fixed height
                             borderRadius: '50%', // Rounded corners to make it a circle
                             objectFit: 'cover', // Ensures the image covers the area without stretching
                             display: 'block', // To prevent inline default of images

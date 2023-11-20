@@ -3,13 +3,25 @@ html {
 }
 
 body {
+  color: #00233F;
+  background-color: #EDF0F5;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem; /* 1rem = 16px (if the base size is 16px) */
+
 }
 
 h1 {
-  font-size: 2rem; /* 2rem = 32px */
+  font-weight: 700;
+  padding-top: 0.5rem;
+  padding-bottom: 0.8rem;
+  font-size: 1.8rem; /* 2rem = 32px */
 }
+
+h2 {
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
 
 p {
   font-size: 1rem; /* 1rem = 16px */
@@ -30,6 +42,27 @@ code {
     monospace;
 }
 
+/* .App .desktop-filter-sidebar {
+  
+  margin: 0;
+} */
+
+.search-bar .MuiOutlinedInput-root {
+  border-radius: 20px; /* Rounded corners */
+  background-color: white; /* White background */
+
+  /* You might want to adjust padding, border, etc., as per your design needs */
+}
+
+.filter-card {
+  background-color: rgb(255, 255, 255);
+  border-radius: 1.5rem;
+}
+
+.rounded-card {
+  border-radius: 20px !important; /* Increased specificity */
+}
+
 
 /* App.css */
 @media (max-width: 899px) {
@@ -42,12 +75,14 @@ code {
   overflow-x: auto;
   white-space: nowrap;
   padding: 10px;
+  
 }
 
 }
 
 @media (min-width: 900px) {
   .App .responsive-filter-container {
+   
     display: none;
   }
 }
