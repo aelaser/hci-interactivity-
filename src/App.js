@@ -25,11 +25,11 @@ const theme = createMuiTheme({
       fontSize: '1.2rem', // Corresponds to 32px
     },
     h3: {
-      color: '#00233F',
+      color: 'rgba(0, 35, 63, 100%)',
       fontSize: '1rem',
-      fontWeight: 600,
-      marginTop: '0.8rem',
-      marginBottom: '0.3rem',
+      fontWeight: 540,
+      marginTop: '0.9rem',
+      marginBottom: '0.4rem',
     },
     body1: {
       fontSize: '1rem', // Corresponds to 16px
@@ -44,6 +44,8 @@ function App() {
   const [selectedDegrees, setSelectedDegrees] = useState([]);
   const [selectedJobTypes, setSelectedJobTypes] = useState([]);
   const [selectedGradYears, setSelectedGradYears] = useState([]);
+  const [selectedInterests, setSelectedInterests] = useState([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeFilterType, setActiveFilterType] = useState(null);
 
@@ -52,6 +54,7 @@ function App() {
   const [uniqueDegrees, setUniqueDegrees] = useState([]);
   const [uniqueJobTypes, setUniqueJobTypes] = useState([]);
   const [uniqueGradYears, setUniqueGradYears] = useState([]);
+  const [uniqueInterests, setUniqueInterests] = useState([]); // New state for interests
 
   const [expanded, setExpanded] = useState({}); // State to manage expanded cards
 
@@ -73,17 +76,24 @@ function App() {
       const degrees = new Set();
       const jobTypes = new Set();
       const gradYears = new Set();
+      const interests = new Set();
       Object.values(fetchedData).forEach(item => {
         degrees.add(item.Degree);
         jobTypes.add(item['Job type']);
         gradYears.add(item['Graduation Date']);
+        if(item.Interests) {
+          interests.add(item.Interests);
+        }
       });
 
       setUniqueDegrees([...degrees]);
       setUniqueJobTypes([...jobTypes]);
       setUniqueGradYears([...gradYears]);
+      setUniqueInterests([...interests]);
     });
   }, []);
+
+   
 
   function filterData(data) {
     return Object.entries(data).filter(([key, value]) => {
@@ -93,7 +103,8 @@ function App() {
       const matchesDegree = !selectedDegrees.length || selectedDegrees.includes(value.Degree);
       const matchesJobType = !selectedJobTypes.length || selectedJobTypes.includes(value['Job type']);
       const matchesGradYear = !selectedGradYears.length || selectedGradYears.includes(value['Graduation Date']);
-      return matchesSearchQuery && matchesDegree && matchesJobType && matchesGradYear;
+      const matchesInterests = !selectedInterests.length || selectedInterests.includes(value.Interests);
+    return matchesSearchQuery && matchesDegree && matchesJobType && matchesGradYear && matchesInterests;
     });
   }
 
@@ -104,24 +115,38 @@ function App() {
       setSelectedJobTypes(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
     } else if (filterType === 'gradYear') {
       setSelectedGradYears(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+    } else if (filterType === 'interests') {
+      setSelectedInterests(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
     }
+    
   }
 
   // Check if an item is selected for a specific filter type
   const isSelected = (filterType, item) => {
-    if (filterType === 'degree') {
-      return selectedDegrees.includes(item);
-    } else if (filterType === 'jobType') {
-      return selectedJobTypes.includes(item);
-    } else if (filterType === 'gradYear') {
-      return selectedGradYears.includes(item);
+    switch (filterType) {
+      case 'degree':
+        return selectedDegrees.includes(item);
+      case 'jobType':
+        return selectedJobTypes.includes(item);
+      case 'gradYear':
+        return selectedGradYears.includes(item);
+      case 'interests':
+        return selectedInterests.includes(item);
+      default:
+        return false;
     }
-    return false;
-  };
+  };  
   function renderCheckboxes(filterType) {
-    const items = filterType === 'degree' ? uniqueDegrees
-                 : filterType === 'jobType' ? uniqueJobTypes
-                 : uniqueGradYears;
+    let items;
+    if (filterType === 'degree') {
+      items = uniqueDegrees;
+    } else if (filterType === 'jobType') {
+      items = uniqueJobTypes;
+    } else if (filterType === 'gradYear') {
+      items = uniqueGradYears;
+    } else if (filterType === 'interests') {
+      items = uniqueInterests;
+    }
   
     return items.map(item => (
       <div className="checkbox-container" key={item}>
@@ -135,6 +160,7 @@ function App() {
     ));
   }
   
+  
 
   function renderFilterSidebar() {
     return (
@@ -142,12 +168,15 @@ function App() {
         {/* Filter by degree */}
         <h2>Track</h2>
         {renderCheckboxes('degree', ['IC', 'PSYC', 'LMC'])}
+        {/* Filter by grad year */}
+        <h2 style = {{marginTop: '28px'}}>Class Year</h2>
+        {renderCheckboxes('gradYear', [2024, 2025])}
+        {/* Filter by interests */}
+        <h2 style={{ marginTop: '28px' }}>Interests</h2>
+        {renderCheckboxes('interests')}
         {/* Filter by job type */}
         <h2 style = {{marginTop: '28px'}}>Seeking</h2>
         {renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking'])}
-        {/* Filter by grad year */}
-        <h2 style = {{marginTop: '28px'}}>Graduation Year</h2>
-        {renderCheckboxes('gradYear', [2024, 2025])}
       </div>
     );
   }
@@ -183,6 +212,8 @@ function App() {
         return renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking']);
       case 'gradYear':
         return renderCheckboxes('gradYear', [2024, 2025]);
+        case 'interests':
+          return renderCheckboxes('interests');
       default:
         return null;
     }
@@ -281,7 +312,7 @@ function App() {
                     {expanded[key] && (
                         <>
                           <Typography variant="h3" component="h3">
-                            Interests
+                            Interests:
                           </Typography>
                           <Typography color="textSecondary">
                             {value['Interests']}
@@ -292,52 +323,64 @@ function App() {
 {expanded[key] && (
   <>
     <Typography variant="h3" component="h3">
-      Seeking
+      Seeking:
     </Typography>
     <Typography color="textSecondary">
       {value['Job type']}
     </Typography>
-    <Divider style={{ margin: '10px 0' }} />
+    <Divider style={{ margin: '20px 0' }} />
     <div style={{ display: 'flex', justifyContent: 'center' }}>
+    {expanded[key] && value.Linkdin && (
       <IconButton 
         aria-label="LinkedIn" 
+        href={value.Linkdin} 
+        target="_blank" // Open in new tab
         style={{ 
           margin: '0 5px', 
-          border: '1px solid #BCC3C9',
-          borderRadius: '50%', // Makes the border circular
+          border: '1px solid #E0E4E8',
+          borderRadius: '30%', // Makes the border circular
           color: '#BCC3C9' 
         }} 
         onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
-        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+        onMouseOut={(e) => e.currentTarget.style.color = '#BCC3C9'}
       >
-        <LinkedInIcon />
+      <LinkedInIcon style={{ fontSize: '20px' }}/>
       </IconButton>
+      )}
+      {expanded[key] && value.Portfolio && (
       <IconButton 
         aria-label="Website" 
+        href={value.Portfolio}
+        target="_blank"
         style={{ 
           margin: '0 5px', 
-          border: '1px solid #BCC3C9',
-          borderRadius: '50%', // Makes the border circular
+          border: '1px solid #E0E4E8',
+          borderRadius: '30%', // Makes the border circular
           color: '#BCC3C9' 
         }} 
         onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
-        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+        onMouseOut={(e) => e.currentTarget.style.color = '#BCC3C9'}
       >
-        <LanguageIcon />
+        <LanguageIcon style={{ fontSize: '20px' }}/>
       </IconButton>
+    )}
+      {expanded[key] && value.Email && (
       <IconButton 
         aria-label="Email" 
+        href={`mailto:${value.Email}`}
         style={{ 
           margin: '0 5px', 
-          border: '1px solid #BCC3C9',
-          borderRadius: '50%', // Makes the border circular
+          border: '1px solid #E0E4E8',
+          borderRadius: '30%', // Makes the border circular
           color: '#BCC3C9' 
         }} 
         onMouseOver={(e) => e.currentTarget.style.color = '#4088C2'}
-        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+        onMouseOut={(e) => e.currentTarget.style.color = '#BCC3C9'}
       >
-        <EmailIcon />
+        <EmailIcon style={{ fontSize: '20px' }}/>
       </IconButton>
+    )}
+
     </div>
   </>
 )}
