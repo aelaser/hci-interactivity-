@@ -133,7 +133,7 @@ function App() {
   // function to render tabs 
   function renderTabs() {
     return (
-      <div style={{color: 'rgba(0, 0, 0, 0.6)', textAlign: 'center', margin: '25px 0px 45px 0px' }}>
+      <div style={{color: 'rgba(0, 0, 0, 0.6)', textAlign: 'center', margin: '25px 0px 45px 10px' }}>
         <div className="tab" onClick={() => setActiveTab('all')}>
           <span className={activeTab === 'all' ? 'active' : ''}>All Results</span>
         </div>
