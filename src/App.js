@@ -11,6 +11,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
+import TurnedInNotOutlinedIcon from '@mui/icons-material/TurnedInNotOutlined';
+import TurnedInIcon from '@mui/icons-material/TurnedIn';
 
 const theme = createMuiTheme({
   typography: {
@@ -329,7 +331,7 @@ function App() {
                 <Card 
                   className="rounded-card" 
                   style={{ 
-                    boxShadow: expanded[key] ? 'none' : '0px 6.5px 0px rgba(64, 136, 194, 0.5)', // Conditional shadow
+                    boxShadow: expanded[key] ? 'none' : '0px 6.5px 0px rgba(64, 136, 194, 0.15)', // Conditional shadow
                  
                   }} 
                   onClick={() => handleExpandClick(key)}
@@ -344,8 +346,8 @@ function App() {
                         color: '#00233F'
                       }}
                     />
-                    <IconButton onClick={(e) => toggleLike(key, e)}>
-                      {likes.includes(key) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    <IconButton style={{color: 'rgba(255, 161, 0, 0.7)'}} onClick={(e) => toggleLike(key, e)}>
+                      {likes.includes(key) ? <TurnedInIcon/> : <TurnedInNotOutlinedIcon/>}
                     </IconButton>
 
                   </div>
