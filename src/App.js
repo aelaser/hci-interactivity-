@@ -8,6 +8,8 @@ import { Divider, IconButton } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import LanguageIcon from '@mui/icons-material/Language';
 import EmailIcon from '@mui/icons-material/Email';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 
 const theme = createMuiTheme({
@@ -65,6 +67,34 @@ function App() {
     }));
   };
 
+  // like profile history 
+  const [likes, setLikes] = useState(() => {
+    // Retrieve likes from local storage if available
+    const savedLikes = localStorage.getItem('likes');
+    return savedLikes ? JSON.parse(savedLikes) : [];
+  });
+  
+  const toggleLike = (id, event) => {
+    // Prevent the click from reaching the parent elements
+    event.stopPropagation();
+  
+    const updatedLikes = likes.includes(id)
+      ? likes.filter(likeId => likeId !== id)
+      : [...likes, id];
+    setLikes(updatedLikes);
+    localStorage.setItem('likes', JSON.stringify(updatedLikes));
+  };
+  
+
+  // for liked profiles 
+  const [showLikedOnly, setShowLikedOnly] = useState(false);
+
+  
+  // this is for tabs 
+  const [activeTab, setActiveTab] = useState('all'); // Possible values: 'all', 'liked'
+
+
+
 
   useEffect(() => {
     const dataRef = ref(database, '1p4rz_7ShnWM-EuNAqSs3k9aYCDFmGbh6giqAP6PpQIc/Sheet1');
@@ -93,10 +123,33 @@ function App() {
     });
   }, []);
 
-   
+  const filterLikedProfiles = () => {
+    return Object.entries(data).filter(([key, _]) => likes.includes(key));
+  };
+
+
+  // function to render tabs 
+  function renderTabs() {
+    return (
+      <div style={{color: 'rgba(0, 0, 0, 0.6)', textAlign: 'center', margin: '25px 0px 45px 0px' }}>
+        <div className="tab" onClick={() => setActiveTab('all')}>
+          <span className={activeTab === 'all' ? 'active' : ''}>All Results</span>
+        </div>
+        <div className="tab" onClick={() => setActiveTab('liked')} disabled={likes.length === 0}>
+          <span className={activeTab === 'liked' ? 'active' : ''}>Saved</span>
+        </div>
+      </div>
+    );
+  }
+  
+  
 
   function filterData(data) {
-    return Object.entries(data).filter(([key, value]) => {
+    if (activeTab === 'liked') {
+      return filterLikedProfiles();
+    }
+
+    let filteredData = Object.entries(data).filter(([key, value]) => {
       const matchesSearchQuery = !searchQuery || Object.values(value).some(item =>
         item.toString().toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -104,9 +157,17 @@ function App() {
       const matchesJobType = !selectedJobTypes.length || selectedJobTypes.includes(value['Job type']);
       const matchesGradYear = !selectedGradYears.length || selectedGradYears.includes(value['Graduation Date']);
       const matchesInterests = !selectedInterests.length || selectedInterests.includes(value.Interests);
-    return matchesSearchQuery && matchesDegree && matchesJobType && matchesGradYear && matchesInterests;
+  
+      return matchesSearchQuery && matchesDegree && matchesJobType && matchesGradYear && matchesInterests;
     });
+  
+    if (showLikedOnly) {
+      filteredData = filterLikedProfiles(filteredData, likes);
+    }
+  
+    return filteredData;
   }
+  
 
   function handleFilterChange(filterType, item) {
     if (filterType === 'degree') {
@@ -256,11 +317,12 @@ function App() {
         </Box>
       </Modal>
       <Grid container spacing={4}>
-        <Grid item xs={12} md={3.5} className="desktop-filter-sidebar">
+        <Grid item xs={12} md={3.3} className="desktop-filter-sidebar">
           {renderFilterSidebar()}
         </Grid>
-        <Grid item xs={12} md={8.5}>
+        <Grid item xs={12} md={8.7}>
           <h1>Meet Our Students</h1>
+          {renderTabs()}
           <Grid container spacing={3}>
             {filterData(data).map(([key, value]) => (
               <Grid item xs={12} sm={6} md={4} key={key}>
@@ -273,16 +335,19 @@ function App() {
                   onClick={() => handleExpandClick(key)}
                 >
                   <CardContent style={{textAlign: 'center'}}>
-                  <div style={{ textAlign: 'left' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <Chip
                       label={`${value.Id}`}
                       style={{
                         backgroundColor: 'rgba(255, 161, 0, 0.5)',
                         borderRadius: '20px',
-                        color: '#00233F',
-                        marginBottom: '10px' // Space between the Chip and the image
+                        color: '#00233F'
                       }}
                     />
+                    <IconButton onClick={(e) => toggleLike(key, e)}>
+                      {likes.includes(key) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    </IconButton>
+
                   </div>
                   {value.Image && (
                     <img

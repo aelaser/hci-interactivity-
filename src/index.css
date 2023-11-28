@@ -58,6 +58,43 @@ code {
   /* You might want to adjust padding, border, etc., as per your design needs */
 }
 
+
+/* Tab Results  */
+.tab {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.tab span {
+  position: relative;
+  padding-bottom: 15px; /* Space between text and underline */
+}
+
+.tab span.active {
+  font-weight: 700;
+  color: #00233F; /* Text color */
+}
+
+.tab span.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #00233F; /* Red underline color */
+  border-radius: 1px;
+  padding-top: 0.4px;
+
+}
+
+.tab:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+
 .filter-card {
   background-color: rgb(255, 255, 255);
   border-radius: 1.5rem;
