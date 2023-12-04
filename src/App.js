@@ -99,6 +99,12 @@ function App() {
 
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) {
+      setSearchQuery(id);
+    }
+
     const dataRef = ref(database, '1p4rz_7ShnWM-EuNAqSs3k9aYCDFmGbh6giqAP6PpQIc/Sheet1');
     onValue(dataRef, (snapshot) => {
       const fetchedData = snapshot.val();
@@ -152,6 +158,7 @@ function App() {
     }
 
     let filteredData = Object.entries(data).filter(([key, value]) => {
+      const matchesId = value.Id.toString() === searchQuery; // Check if the ID matches the search query
       const matchesSearchQuery = !searchQuery || Object.values(value).some(item =>
         item.toString().toLowerCase().includes(searchQuery.toLowerCase())
       );
