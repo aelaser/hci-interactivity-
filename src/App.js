@@ -7,6 +7,7 @@ import CustomArrowIcon from './components/ArrowIcon'; // Adjust the import path 
 import { Divider, IconButton } from '@mui/material';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import LanguageIcon from '@mui/icons-material/Language';
+import CloseIcon from '@mui/icons-material/Close';
 import EmailIcon from '@mui/icons-material/Email';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -51,6 +52,9 @@ function App() {
   const [selectedInterests, setSelectedInterests] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
   const [activeFilterType, setActiveFilterType] = useState(null);
 
 
@@ -275,19 +279,41 @@ function App() {
   }
 
   function renderModalContent() {
+    let title = '';
     switch (activeFilterType) {
       case 'degree':
-        return renderCheckboxes('degree', ['IC', 'PSYC', 'LMC']);
+        title = 'Degree';
+        break;
       case 'jobType':
-        return renderCheckboxes('jobType', ['Internship', 'Full time', 'Networking']);
+        title = 'Job Type';
+        break;
       case 'gradYear':
-        return renderCheckboxes('gradYear', [2024, 2025]);
-        case 'interests':
-          return renderCheckboxes('interests');
+        title = 'Graduation Year';
+        break;
+      case 'interests':
+        title = 'Interests';
+        break;
       default:
         return null;
     }
+  
+    return (
+      <>
+        <div className="modal-title-container">
+          <h2 className="custom-modal-box-title">{title}</h2>
+          <IconButton onClick={closeModal} className="modal-close-button">
+            <CloseIcon style={{ fontSize: '1.5rem', backgroundColor: 'rgba(67, 67, 67, 0.1)', borderRadius:'50%', padding:'0.4rem'}}/>
+          </IconButton>
+
+        </div>
+        {renderCheckboxes(activeFilterType)}
+        <button className="modal-bottom-close-button" onClick={closeModal}>
+          Confirm
+        </button>
+      </>
+    );
   }
+  
 
   if (!data) return <div>Loading...</div>;
 
@@ -321,7 +347,7 @@ function App() {
         {renderFilterTags()}
       </div>
       <Modal open={isModalOpen} onClose={closeModal}>
-        <Box style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white', padding: '20px', maxHeight: '80vh', overflow: 'auto' }}>
+        <Box className={`custom-modal-box ${isModalOpen ? '' : 'hidden'}`} style={{ position: 'absolute',  transform: 'translate(-50%, -50%)', backgroundColor: 'white', padding: '20px', maxHeight: '80vh', overflow: 'auto' }}>
           {renderModalContent()}
         </Box>
       </Modal>

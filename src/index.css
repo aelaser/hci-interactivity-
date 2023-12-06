@@ -224,8 +224,112 @@ code {
   display: flex;
   overflow-x: auto;
   white-space: nowrap;
-  padding: 10px;
+  /* padding: 0px; */
   
+}
+
+
+
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToBottom {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.custom-modal-box {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background-color: white;
+  z-index: 1000;
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  overflow: auto;
+  animation: slideInFromBottom 0.3s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  /* padding: 20px; */
+}
+.modal-bottom-close-button {
+  /* existing styles */
+  margin-bottom: 4rem; /* Adjust this value as needed for padding from the bottom */
+}
+
+
+
+.custom-modal-box-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-left: 10px;
+  margin-bottom: 20px; /* Spacing below the title */
+  color: #00233F;
+}
+
+.custom-modal-box .checkbox-container {
+  margin-left: 20px;
+  padding: 10px 0; /* Spacing around each filter option */
+}
+
+.modal-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-close-button {
+  background-color: red; /* Light grey with opacity */
+  border-radius: 50%; /* Circular shape */
+  width: 30px; /* Adjust the width as needed */
+  height: 30px; /* Adjust the height as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px; /* Padding to ensure the icon doesn't fill the entire button */
+}
+
+
+
+.modal-bottom-close-button {
+  background-color: #00233F;
+
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1rem 5rem;
+  border: none;
+  border-radius: 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  /* Center the button */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.custom-modal-box.hidden {
+  animation: slideOutToBottom 0.3s ease-out forwards;
 }
 
 }
